@@ -1,25 +1,50 @@
 import React, { useState } from "react";
 
-function QuestionForm(props) {
+function QuestionForm({onFormSubmit}) {
+  const formAnswers = []
   const [formData, setFormData] = useState({
     prompt: "",
-    answer1: "",
-    answer2: "",
-    answer3: "",
-    answer4: "",
+    answers: [],
     correctIndex: 0,
   });
 
   function handleChange(event) {
+
+    switch (event.target.name) {
+      case "answer1":
+        formAnswers[0] = event.target.value
+        break;
+      case "answer2":
+        formAnswers[1] = event.target.value
+        break;
+      case "answer3":
+        formAnswers[2] = event.target.value
+        break;
+      case "answer2":
+        formAnswers[1] = event.target.value
+        break;
+      default:
+        break;
+    }
+    
+    const key = event.target.name.includes("answer") ? "answers" : event.target.name
+    const value = event.target.name.includes("answer") ? formAnswers : event.target.value
     setFormData({
       ...formData,
-      [event.target.name]: event.target.value,
+      [key]: value,
     });
   }
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(formData);
+    fetch("http://localhost:4000/questions", {
+      method : "POST",
+      headers : {
+        "Content-Type" : "application/json"
+      },
+      body : JSON.stringify(formData)
+    })
+    onFormSubmit(formData)
   }
 
   return (
@@ -40,7 +65,7 @@ function QuestionForm(props) {
           <input
             type="text"
             name="answer1"
-            value={formData.answer1}
+            value={formData.answers[0]}
             onChange={handleChange}
           />
         </label>
@@ -49,7 +74,7 @@ function QuestionForm(props) {
           <input
             type="text"
             name="answer2"
-            value={formData.answer2}
+            value={formData.answers[1]}
             onChange={handleChange}
           />
         </label>
@@ -58,7 +83,7 @@ function QuestionForm(props) {
           <input
             type="text"
             name="answer3"
-            value={formData.answer3}
+            value={formData.answers[2]}
             onChange={handleChange}
           />
         </label>
@@ -67,7 +92,7 @@ function QuestionForm(props) {
           <input
             type="text"
             name="answer4"
-            value={formData.answer4}
+            value={formData.answers[3]}
             onChange={handleChange}
           />
         </label>
